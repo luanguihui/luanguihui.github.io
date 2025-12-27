@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猜数字小游戏</title>
+    <style>
+        /* 手机端适配样式 */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .game-box {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        input {
+            padding: 10px;
+            width: 150px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>栾桂辉的猜数字游戏</h1>
+    <div class="game-box">
+        <p>我随机生成了1-100的数字，快来猜猜看！</p>
+        <input type="number" id="guessInput" min="1" max="100" placeholder="输入数字">
+        <button onclick="checkGuess()">提交</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // 随机生成目标数字
+        const targetNumber = Math.floor(Math.random() * 100) + 1;
+        let attempts = 0;
+        const maxAttempts = 7;
+
+        function checkGuess() {
+            const guessInput = document.getElementById("guessInput");
+            const resultDiv = document.getElementById("result");
+            const guess = parseInt(guessInput.value);
+
+            // 验证输入
+            if (isNaN(guess) || guess < 1 || guess > 100) {
+                resultDiv.textContent = "请输入1-100之间的有效数字！";
+                resultDiv.style.color = "#f44336";
+                return;
+            }
+
+            attempts++;
+            // 判断猜测结果
+            if (attempts > maxAttempts) {
+                resultDiv.textContent = `次数用完啦！正确数字是${targetNumber}。`;
+                resultDiv.style.color = "#f44336";
+                guessInput.disabled = true;
+                return;
+            }
+
+            if (guess < targetNumber) {
+                resultDiv.textContent = `太小了！你还有${maxAttempts - attempts}次机会。`;
+                resultDiv.style.color = "#ff9800";
+            } else if (guess > targetNumber) {
+                resultDiv.textContent = `太大了！你还有${maxAttempts - attempts}次机会。`;
+                resultDiv.style.color = "#ff9800";
+            } else {
+                resultDiv.textContent = `恭喜！你用了${attempts}次猜中了数字${targetNumber}！`;
+                resultDiv.style.color = "#4CAF50";
+                guessInput.disabled = true;
+            }
+
+            // 清空输入框
+            guessInput.value = "";
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
