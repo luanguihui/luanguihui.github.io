@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>栾桂辉的小游戏合集</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            max-width: 450px;
+            margin: 60px auto;
+            padding: 0 25px;
+            background-color: #f5f7fa;
+            text-align: center;
+        }
+        h1 { color: #2d3748; font-size: 28px; margin-bottom: 40px; }
+        .game-card {
+            background-color: white;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+        .game-card:hover { transform: translateY(-5px); }
+        .game-card h2 { color: #4299e1; margin-top: 0; }
+        .game-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 25px;
+            background-color: #4299e1;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .game-link:hover { background-color: #3182ce; }
+        .footer { margin-top: 50px; color: #718096; font-size: 14px; }
+        
+        /* 游戏通用样式 */
+        .game-box {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 12px 25px;
+            background-color: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .back-btn { background-color: #9f7aea; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>栾桂辉的小游戏合集</h1>
+
+    <div class="game-card" onclick="showGame('guess')">
+        <h2>猜数字游戏</h2>
+        <p>猜1-100之间的随机数，7次机会挑战！</p>
+        <button class="btn">开始玩猜数字</button>
+    </div>
+
+    <div class="game-card" onclick="showGame('rps')">
+        <h2>石头剪刀布</h2>
+        <p>和电脑对决，看看谁的手气更好！</p>
+        <button class="btn">开始玩石头剪刀布</button>
+    </div>
+
+    <div class="game-card">
+        <h2>植物大战栾桂辉版</h2>
+        <p>纯代码打造！无限阳光+无限冷却</p>
+        <a href="pvz.html" class="game-link">开始保卫花园</a>
+    </div>
+
+    <!-- 游戏容器 -->
+    <div id="game-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; padding-top:50px;">
+        <div id="game-content" style="max-width:400px; margin:0 auto;"></div>
+    </div>
+
+    <div class="footer">栾桂辉的小游戏站 © 2025</div>
+
+    <script>
+        function showGame(game) {
+            const modal = document.getElementById('game-modal');
+            const content = document.getElementById('game-content');
+            modal.style.display = 'block';
+            
+            if (game === 'guess') {
+                content.innerHTML = `
+                    <div class="game-box">
+                        <h2>猜数字游戏</h2>
+                        <p>我已经想好了一个1到100之间的数字。</p>
+                        <input type="number" id="guess-input" min="1" max="100" placeholder="请输入你猜的数字"><br><br>
+                        <button class="btn" onclick="checkGuess()">提交</button>
+                        <div id="guess-result" style="margin-top:20px;"></div>
+                        <p>剩余次数: <span id="guess-left">7</span></p>
+                        <button class="back-btn btn" onclick="closeGame()">关闭</button>
+                    </div>
+                `;
+                initGuess();
+            } else if (game === 'rps') {
+                content.innerHTML = `
+                    <div class="game-box">
+                        <h2>石头剪刀布</h2>
+                        <button class="btn" onclick="playRPS('石头')">石头</button>
+                        <button class="btn" onclick="playRPS('剪刀')">剪刀</button>
+                        <button class="btn" onclick="playRPS('布')">布</button>
+                        <div id="rps-result" style="margin-top:20px; font-size:18px;"></div>
+                        <div id="rps-score" style="margin-top:10px;">得分：玩家 0 - 0 电脑</div>
+                        <button class="back-btn btn" onclick="closeGame()">关闭</button>
+                    </div>
+                `;
+                initRPS();
+            }
+        }
+        
+        function closeGame() {
+            document.getElementById('game-modal').style.display = 'none';
+        }
+
+        // 猜数字逻辑
+        let secretNumber, guessCount;
+        function initGuess() {
+            secretNumber = Math.floor(Math.random() * 100) + 1;
+            guessCount = 7;
+            document.getElementById('guess-left').innerText = guessCount;
+            document.getElementById('guess-result').innerText = '请输入数字并点击提交';
+        }
+        function checkGuess() {
+            const input = document.getElementById('guess-input');
+            const result = document.getElementById('guess-result');
+            const userGuess = Number(input.value);
+            
+            if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
+                result.innerText = '请输入1到100之间的有效数字';
+                return;
+            }
+            
+            guessCount--;
+            document.getElementById('guess-left').innerText = guessCount;
+            
+            if (userGuess === secretNumber) {
+                result.innerText = `恭喜你猜对了！数字就是 ${secretNumber}！`;
+                result.style.color = 'green';
+            } else if (guessCount === 0) {
+                result.innerText = `游戏结束！正确数字是 ${secretNumber}。`;
+                result.style.color = 'red';
+            } else {
+                const hint = userGuess < secretNumber ? '太小了' : '太大了';
+                result.innerText = `你猜的数字${hint}，你还有 ${guessCount} 次机会。`;
+                result.style.color = 'black';
+            }
+            input.value = '';
+        }
+
+        // 石头剪刀布逻辑
+        let pScore = 0, cScore = 0;
+        function initRPS() {
+            pScore = 0; cScore = 0;
+            document.getElementById('rps-score').innerText = `得分：玩家 0 - 0 电脑`;
+            document.getElementById('rps-result').innerText = '请选择你的出拳！';
+        }
+        function playRPS(playerChoice) {
+            const choices = ['石头', '剪刀', '布'];
+            const computerChoice = choices[Math.floor(Math.random() * 3)];
+            let res = '';
+            
+            if (playerChoice === computerChoice) {
+                res = `平局！你和电脑都出了${playerChoice}`;
+            } else if (
+                (playerChoice === '石头' && computerChoice === '剪刀') ||
+                (playerChoice === '剪刀' && computerChoice === '布') ||
+                (playerChoice === '布' && computerChoice === '石头')
+            ) {
+                pScore++;
+                res = `胜利！你出${playerChoice}，电脑出${computerChoice}`;
+            } else {
+                cScore++;
+                res = `失败！你出${playerChoice}，电脑出${computerChoice}`;
+            }
+            
+            document.getElementById('rps-result').innerText = res;
+            document.getElementById('rps-score').innerText = `得分：玩家 ${pScore} - ${cScore} 电脑`;
+        }
+    </script>
+</body>
+</html>
